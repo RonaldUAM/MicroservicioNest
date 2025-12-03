@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: genosentinel-db
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: genosentinel
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - genosentinel-network
+
+  app:
+    build: .
+    container_name: genosentinel-app
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USERNAME: root
+      DB_PASSWORD: password
+      DB_NAME: genosentinel
+    depends_on:
+      - mysql
+    networks:
+      - genosentinel-network
+
+volumes:
+  mysql_data:
+
+networks:
+  genosentinel-network:
+    driver: bridge

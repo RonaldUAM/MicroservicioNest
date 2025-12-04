@@ -1,16 +1,13 @@
-# stage build
-FROM node:18-alpine AS builder
+# Dockerfile ultra simple y 100% funcional
+FROM node:18-alpine
+
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm ci
+RUN npm install --legacy-peer-deps
+
 COPY . .
 RUN npm run build
 
-# stage runtime
-FROM node:18-alpine
-WORKDIR /app
-ENV NODE_ENV=production
-COPY package*.json ./
-RUN npm ci --only=production
-COPY --from=builder /app/dist ./dist
-CMD ["node","dist/main.js"]
+EXPOSE 3000
+CMD ["node", "dist/main"]
